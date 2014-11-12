@@ -472,7 +472,21 @@ Rsync.prototype.execute = function(callback, stdoutHandler, stderrHandler) {
             callback(error, code, this.command());
         }
     }.bind(this));
+    
+    this._process = cmdProc;
 };
+
+/**
+ * Abort the rsync process, optionally using the provided argument as the signal to kill().
+ * Immediately before killing the process the object's `aborted` property is set to `true`
+ *
+ * This function currently provides no callback. To be notified when the process is aborted,
+ * provide a callback to the `execute` function that checks the value of `aborted`.
+ */
+Rsync.prototype.abort = function(signal) {
+	this.aborted = true;
+	this._process.kill(signal)
+}
 
 /**
  * Get or set the debug property.
